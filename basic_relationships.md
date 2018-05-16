@@ -15,7 +15,7 @@ Base = declarative_base()
 #    models go here  #
 ######################
 
-# create a sqlite database in memory and make the sql queries verbose
+# create a sqlite database in memory and show me the sql queries(echo=True)
 engine = create_engine('sqlite:///:memory:', echo=True)
 
 # create all of the tables
@@ -67,7 +67,7 @@ class Offences(Base):
     description = Column(String(50), unique=True)
     person_id = Column(Integer, ForeignKey('person.id'))
 
-# create a sqlite database in memory and make the sql queries verbose
+# create a sqlite database in memory, removed echo for a cleaner output
 engine = create_engine('sqlite:///:memory:')
 
 # create all of the tables

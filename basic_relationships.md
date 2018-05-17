@@ -1,4 +1,8 @@
 #### *A jackasses guide to SQLAlchemy <br> By LibreLad: Part-time Jackass* <br> **Relationship Basics**
+> A super simple guide to *One to Many, Many to One, One to One and Many to Many* <br>
+> Most of the links in this guide link back to the Official SQLAlachemy documentation <br>
+> Please send ~~nudes~~ commits if you find any errors or if you can make an example clearer. <br>
+> ⚠️**Warning: You *WILL* need a sense of humour to read this guide!**
 ---
 
 ##### Standard file layout for these examples :
@@ -98,7 +102,7 @@ offence = Offences(description="Stealing from the homeless.", person_id=libre_la
 session.add(offence)
 
 # this offence has no person_id, however since we didnt make person_id
-# NOT NULL this is allowed...
+# NOT NULL(nullable=False) this is allowed...
 offence = Offences(description="Public nudity.")
 session.add(offence)
 
@@ -143,7 +147,8 @@ class Person(Base):
     __tablename__ = 'person'
     id = Column(Integer, Sequence('person_seq'), primary_key=True)
     name = Column(String(50), nullable=False)
-    # creates a relationship between models, and created a virtual column to link parent to child
+    # creates a relationship between models and created a virtual column to
+    # link parent to child (offences)
     offences = relationship('Offences', back_populates="person")
 
 class Offences(Base):
@@ -153,13 +158,14 @@ class Offences(Base):
     __tablename__ = 'offences'
     id = Column(Integer, Sequence('arrests_seq'), primary_key=True)
     description = Column(String(50), unique=True)
-    # accesses the patrnt model from the child
+    # accesses the patent model from the child
     # this gets added in order to have an MtO accesser column
     person_id = Column(Integer, ForeignKey('person.id'))
-    # creates a replationship from child to parent, use backref it's way more understandable
+    # creates a replationship from child to parent
+    # use backref it's way more understandable
     person = relationship('Person', back_populates='offences')
 
-# create a sqlite database in memory and make the sql queries verbose
+# create a sqlite database in memory, removed echo for a cleaner output
 engine = create_engine('sqlite:///:memory:')
 
 # create all of the tables
@@ -189,7 +195,7 @@ session.add(offence)
 offence = Offences(description="Stealing from the homeless.", person_id=libre_lad.id)
 session.add(offence)
 
-# this offence has no person_id, however since we didnt make person_id
+# this offence has no person_id, however since we didn't make person_id
 # NOT NULL this is allowed...
 offence = Offences(description="Public nudity.")
 session.add(offence)

@@ -137,4 +137,4 @@ session.close()
 ###### Notes:
 `ForeignKey`'s link to a field (table.column). `relationship`'s link to Models
 
-> 🚑 Please see the example relationships python files for examples on `backref` and `back_populates`.
+> 🚑 Please see the example relationships python files for examples on `back_populates` and `backref`. 

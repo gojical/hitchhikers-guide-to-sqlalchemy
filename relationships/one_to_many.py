@@ -31,6 +31,7 @@ Base.metadata.create_all(bind=engine)
 
 # start session
 Session = sessionmaker(bind=engine)
+
 session = Session()
 
 # create a peson and add them to the session

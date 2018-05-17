@@ -12,7 +12,9 @@ class Person(Base):
     __tablename__ = 'person'
     id = Column(Integer, Sequence('person_seq'), primary_key=True)
     name = Column(String(50), nullable=False)
-    offences = relationship('Offences')
+    # creates a relationship between models and created a virtual column to
+    # link parent to child (offences)
+    offences = relationship('Offences', back_populates="person")
 
 class Offences(Base):
     '''
@@ -21,7 +23,12 @@ class Offences(Base):
     __tablename__ = 'offences'
     id = Column(Integer, Sequence('arrests_seq'), primary_key=True)
     description = Column(String(50), unique=True)
+    # accesses the patent model from the child
+    # this gets added in order to have an MtO accesser column
     person_id = Column(Integer, ForeignKey('person.id'))
+    # creates a replationship from child to parent
+    # use backref it's way more understandable
+    person = relationship('Person', back_populates='offences')
 
 # create a sqlite database in memory, removed echo for a cleaner output
 engine = create_engine('sqlite:///:memory:')
@@ -31,7 +38,6 @@ Base.metadata.create_all(bind=engine)
 
 # start session
 Session = sessionmaker(bind=engine)
-
 session = Session()
 
 # create a peson and add them to the session
@@ -54,8 +60,8 @@ session.add(offence)
 offence = Offences(description="Stealing from the homeless.", person_id=libre_lad.id)
 session.add(offence)
 
-# this offence has no person_id, however since we didnt make person_id
-# NOT NULL(nullable=False) this is allowed...
+# this offence has no person_id, however since we didn't make person_id
+# NOT NULL this is allowed...
 offence = Offences(description="Public nudity.")
 session.add(offence)
 
@@ -67,6 +73,9 @@ print "%s's Offences:" % person.name
 for offence in person.offences:
     print "offence: %s" % offence.description
 
-# commit and close the session
+e = session.query(Offences).filter(Offences.description == 'Stealing from the homeless.').first()
+print e.person.name
+
+# commit object to the database and close the session
 session.commit()
 session.close()

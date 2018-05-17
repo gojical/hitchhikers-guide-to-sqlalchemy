@@ -9,8 +9,8 @@
 
 ##### Standard file layout for these examples :
 
-> <br>
-> ℹ️ The following examples were run in a virtual environment with `sqlahchemy` installed. <br>
+
+> 🚑 The following examples were run in a virtual environment with `sqlahchemy` installed.
 
 ```python
 from sqlalchemy import create_engine, Table, Column, Integer, ForeignKey, Sequence, String

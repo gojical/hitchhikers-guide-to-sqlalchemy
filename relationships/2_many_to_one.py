@@ -53,5 +53,6 @@ person_query = session.query(Person).filter(Person.name == "Jeff").first()
 print "%s has been visiting" % person_query.name
 print person_query.website.url
 
+# commit object to the database and close the session
 session.commit()
 session.close()

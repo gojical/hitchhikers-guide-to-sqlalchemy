@@ -7,6 +7,15 @@
 
 ---
 
+##### Terminology:
+* [`relationship`](http://docs.sqlalchemy.org/en/latest/orm/relationship_api.html) : Creates the relationship between two classes `offences = relationship('Offences')`
+  * [`lazy`](http://docs.sqlalchemy.org/en/latest/orm/relationship_api.html?highlight=lazy#sqlalchemy.orm.relationship.params.lazy) : when `True`, when you fetch the parent object it will fetch all of the child references.
+  * [`backref`](http://docs.sqlalchemy.org/en/latest/orm/relationship_api.html#sqlalchemy.orm.relationship.params.backref) : used to create *bidirectional* access to the parent model from the child model (MtO).
+  * [`back_populates`](http://docs.sqlalchemy.org/en/latest/orm/relationship_api.html#sqlalchemy.orm.relationship.params.back_populates): works similar to backref, used to create an explicit relationship form child to parent.
+* `Foreignkey` : A key that links two tables together
+
+---
+
 ##### Standard file layout for these examples :
 
 
@@ -41,6 +50,7 @@ session = Session()
 session.commit()
 session.close()
 ```
+
 ---
 
 ##### [One to Many](http://docs.sqlalchemy.org/en/latest/orm/basic_relationships.html#one-to-many) :
@@ -127,14 +137,79 @@ session.commit()
 session.close()
 ```
 
-###### Terminology:
-* [`relationship`](http://docs.sqlalchemy.org/en/latest/orm/relationship_api.html) : Creates the relationship between two classes `offences = relationship('Offences')`
-  * [`lazy`](http://docs.sqlalchemy.org/en/latest/orm/relationship_api.html?highlight=lazy#sqlalchemy.orm.relationship.params.lazy) : when `True`, when you fetch the parent object it will fetch all of the child references.
-  * [`backref`](http://docs.sqlalchemy.org/en/latest/orm/relationship_api.html#sqlalchemy.orm.relationship.params.backref) : used to create *bidirectional* access to the parent model from the child model (MtO).
-  * [`back_populates`](http://docs.sqlalchemy.org/en/latest/orm/relationship_api.html#sqlalchemy.orm.relationship.params.back_populates): works similar to backref, used to create an explicit relationship form child to parent.
-* `Foreignkey` : A key that links two tables together
-
 ###### Notes:
 `ForeignKey`'s link to a field (table.column). `relationship`'s link to Models
 
-> 🚑 Please see the example relationships python files for examples on `back_populates` and `backref`. 
+> 🚑 Please see the example relationships python files for examples on `back_populates` and `backref`.
+
+---
+
+##### [Many to One](http://docs.sqlalchemy.org/en/latest/orm/basic_relationships.html#many-to-one) :
+
+###### Definition:
+Both the `ForeignKey` and the `relationship` are in the parent model to create a relationship with the child model. There is no object mapping (ForeginKey) in the child model. **Many** parent objects can link to **one** specific child object.  
+
+###### Example:
+
+```python
+from sqlalchemy import create_engine, Table, Column, Integer, ForeignKey, Sequence, String
+from sqlalchemy.orm import relationship, sessionmaker
+from sqlalchemy.ext.declarative import declarative_base
+
+# base class for all of the models
+Base = declarative_base()
+
+class Person(Base):
+    __tablename__ = 'person'
+    id = Column(Integer, primary_key=True)
+    name = Column(String, nullable=False, unique=True)
+    website_id = Column(Integer, ForeignKey('websites.id'))
+    website = relationship('Websites')
+
+class Websites(Base):
+    __tablename__ = 'websites'
+    id = Column(Integer, primary_key=True)
+    url = Column(String, nullable=False)
+
+# create a sqlite database in memory and show me the sql queries(echo=True)
+engine = create_engine('sqlite:///:memory:')
+
+# create all of the tables
+Base.metadata.create_all(bind=engine)
+
+# start session
+Session = sessionmaker(bind=engine)
+session = Session()
+
+# create a website object
+foot_fetish = Websites(url="https://ffetish.co/no_idea_where_this_leads")
+
+# add object to sesssion
+session.add(foot_fetish)
+
+# fetch object from session
+session.query(Websites).filter(Websites.id == 1).first()
+
+# create person object relating to foot_fetish object
+person1 = Person(name="Jeff", website_id=foot_fetish.id)
+person2 = Person(name="Jeruska", website_id=foot_fetish.id)
+person3 = Person(name="Bongani", website_id=foot_fetish.id)
+
+# add persons to the session
+session.add(person1)
+session.add(person2)
+session.add(person3)
+
+# lets test our many to one by looking for the site url for Jeff
+person_query = session.query(Person).filter(Person.name == "Jeff").first()
+
+# accessing the one website from the person object
+print "%s has been visiting" % person_query.name
+print person_query.website.url
+
+# commit object to the database and close the session
+session.commit()
+session.close()
+```
+
+---

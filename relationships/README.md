@@ -53,7 +53,7 @@ session.close()
 
 ---
 
-##### [One to Many](http://docs.sqlalchemy.org/en/latest/orm/basic_relationships.html#one-to-many) :
+##### 1. [One to Many](http://docs.sqlalchemy.org/en/latest/orm/basic_relationships.html#one-to-many) :
 
 ###### Definition:
 A *Parent table* can have a (OtM) relationship with a *child table*, however this relationship **is not bidirectional**, the *parent* can access the data in the *child* table with a defined `relationship`. The child table holds a `ForeignKey` that references the parent's key in order to filter out which records to return.
@@ -144,7 +144,7 @@ session.close()
 
 ---
 
-##### [Many to One](http://docs.sqlalchemy.org/en/latest/orm/basic_relationships.html#many-to-one) :
+##### 2. [Many to One](http://docs.sqlalchemy.org/en/latest/orm/basic_relationships.html#many-to-one) :
 
 ###### Definition:
 Both the `ForeignKey` and the `relationship` are in the parent model to create a relationship with the child model. There is no object mapping (ForeginKey) in the child model. **Many** parent objects can link to **one** specific child object.  

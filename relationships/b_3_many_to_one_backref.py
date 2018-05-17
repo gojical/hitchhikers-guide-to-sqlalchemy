@@ -10,15 +10,14 @@ class Person(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String, nullable=False, unique=True)
     website_id = Column(Integer, ForeignKey('website.id'))
-    website = relationship('Website')
+    # creating a virtual column that will give the website object
+    # access to attached person objects
+    website = relationship('Website', backref='users')
 
 class Website(Base):
     __tablename__ = 'website'
     id = Column(Integer, primary_key=True)
     url = Column(String, nullable=False)
-    # creates a relationship with the person model that can be accessed by
-    # the website object
-    users = relationship('Person', back_populates='website')
 
 # create a sqlite database in memory and show me the sql queries(echo=True)
 engine = create_engine('sqlite:///:memory:')

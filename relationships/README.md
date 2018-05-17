@@ -58,6 +58,8 @@ session.close()
 ###### Definition:
 A *Parent table* can have a (OtM) relationship with a *child table*, however this relationship **is not bidirectional**, the *parent* can access the data in the *child* table with a defined `relationship`. The child table holds a `ForeignKey` that references the parent's key in order to filter out which records to return.
 
+> 🚑 You can make OtM relationships bidirectional see `back_populates` and `backref` examples in the relationships folder.
+
 ###### Example:
 
 ```python
@@ -140,8 +142,6 @@ session.close()
 ###### Notes:
 `ForeignKey`'s link to a field (table.column). `relationship`'s link to Models
 
-> 🚑 Please see the example relationships python files for examples on `back_populates` and `backref`.
-
 ---
 
 ##### [Many to One](http://docs.sqlalchemy.org/en/latest/orm/basic_relationships.html#many-to-one) :
@@ -212,4 +212,6 @@ session.commit()
 session.close()
 ```
 
+###### Notes:
+`ForeignKey` and `relationship` are both in the parent model, the child model has no knowledge of the relation.
 ---

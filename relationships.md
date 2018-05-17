@@ -9,7 +9,7 @@
 
 ##### Standard file layout for these examples :
 
-> ℹ️ The following examples where run in a virtual environment with `sqlahchemy` installed.
+> ℹ️ The following examples were run in a virtual environment with `sqlahchemy` installed.
 
 ```python
 from sqlalchemy import create_engine, Table, Column, Integer, ForeignKey, Sequence, String
@@ -219,4 +219,3 @@ print e.person.name
 session.commit()
 session.close()
 ```
-

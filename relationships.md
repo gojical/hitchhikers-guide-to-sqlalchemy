@@ -2,7 +2,7 @@
 
 > ⚠️**Warning: You *WILL* need a sense of humour to read this guide!** <br>
 > A super simple guide to *One to Many, Many to One, One to One and Many to Many* Relationships <br>
-> Most of the links in this guide link back to the Official SQLAlachemy documentation <br>
+> Most of the links in this guide link back to the Official SQLAlchemy documentation <br>
 > Please send ~~nudes~~ commits if you find any errors or if you can make an example clearer. <br>
 
 ---
@@ -10,7 +10,7 @@
 ##### Standard file layout for these examples :
 
 
-> 🚑 The following examples were run in a virtual environment with `sqlahchemy` installed.
+> 🚑 The following examples were run in a *virtual environment* with `sqlalchemy` installed.
 
 ```python
 from sqlalchemy import create_engine, Table, Column, Integer, ForeignKey, Sequence, String
@@ -20,7 +20,7 @@ from sqlalchemy.ext.declarative import declarative_base
 # base class for all of the models
 Base = declarative_base()
 
-#######################
+######################
 #    models go here  #
 ######################
 
@@ -34,9 +34,9 @@ Base.metadata.create_all(bind=engine)
 Session = sessionmaker(bind=engine)
 session = Session()
 
-################################
+###############################
 #   session commands go here  #
-################################
+###############################
 
 session.commit()
 session.close()
@@ -65,7 +65,7 @@ class Person(Base):
     __tablename__ = 'person'
     id = Column(Integer, Sequence('person_seq'), primary_key=True)
     name = Column(String(50), nullable=False)
-    offences = relationship('Offences', lazy=True)
+    offences = relationship('Offences')
 
 class Offences(Base):
     '''

@@ -10,7 +10,7 @@
 ##### Standard file layout for these examples :
 
 
-> 🚑 The following examples were run in a *virtual environment* with `sqlalchemy` installed..
+> 🚑 The following examples were run in a *virtual environment* with `sqlalchemy` installed.
 
 ```python
 from sqlalchemy import create_engine, Table, Column, Integer, ForeignKey, Sequence, String

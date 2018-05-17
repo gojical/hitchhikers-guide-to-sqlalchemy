@@ -1,11 +1,15 @@
 #### *A jackasses guide to SQLAlchemy <br> By LibreLad: Part-time Jackass* <br> **Relationship Basics**
-> A super simple guide to *One to Many, Many to One, One to One and Many to Many* <br>
+
+> ⚠️**Warning: You *WILL* need a sense of humour to read this guide!** <br>
+> A super simple guide to *One to Many, Many to One, One to One and Many to Many* Relationships <br>
 > Most of the links in this guide link back to the Official SQLAlachemy documentation <br>
 > Please send ~~nudes~~ commits if you find any errors or if you can make an example clearer. <br>
-> ⚠️**Warning: You *WILL* need a sense of humour to read this guide!**
+
 ---
 
 ##### Standard file layout for these examples :
+
+> ℹ️ The following examples where run in a virtual environment with `sqlahchemy` installed.
 
 ```python
 from sqlalchemy import create_engine, Table, Column, Integer, ForeignKey, Sequence, String
@@ -215,3 +219,4 @@ print e.person.name
 session.commit()
 session.close()
 ```
+

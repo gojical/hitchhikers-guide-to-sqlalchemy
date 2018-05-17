@@ -9,11 +9,11 @@ class Person(Base):
     __tablename__ = 'person'
     id = Column(Integer, primary_key=True)
     name = Column(String, nullable=False, unique=True)
-    website_id = Column(Integer, ForeignKey('websites.id'))
-    website = relationship('Websites')
+    website_id = Column(Integer, ForeignKey('website.id'))
+    website = relationship('Website')
 
-class Websites(Base):
-    __tablename__ = 'websites'
+class Website(Base):
+    __tablename__ = 'website'
     id = Column(Integer, primary_key=True)
     url = Column(String, nullable=False)
 
@@ -28,13 +28,13 @@ Session = sessionmaker(bind=engine)
 session = Session()
 
 # create a website object
-foot_fetish = Websites(url="https://ffetish.co/no_idea_where_this_leads")
+foot_fetish = Website(url="https://ffetish.co/no_idea_where_this_leads")
 
 # add object to sesssion
 session.add(foot_fetish)
 
 # fetch object from session
-session.query(Websites).filter(Websites.id == 1).first()
+session.query(Website).filter(Website.id == 1).first()
 
 # create person object relating to foot_fetish object
 person1 = Person(name="Jeff", website_id=foot_fetish.id)

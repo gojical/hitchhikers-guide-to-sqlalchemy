@@ -58,7 +58,7 @@ session.close()
 ###### Definition:
 A *Parent table* can have a (OtM) relationship with a *child table*, however this relationship **is not bidirectional**, the *parent* can access the data in the *child* table with a defined `relationship`. The child table holds a `ForeignKey` that references the parent's key in order to filter out which records to return.
 
-> 🚑 You can make OtM relationships bidirectional see `back_populates` and `backref` examples in the relationships folder.
+> 🚑 You can make OtM relationships bidirectional, see `back_populates` and `backref` examples in the relationships folder.
 
 ###### Example:
 
@@ -163,11 +163,11 @@ class Person(Base):
     __tablename__ = 'person'
     id = Column(Integer, primary_key=True)
     name = Column(String, nullable=False, unique=True)
-    website_id = Column(Integer, ForeignKey('websites.id'))
-    website = relationship('Websites')
+    website_id = Column(Integer, ForeignKey('website.id'))
+    website = relationship('Website')
 
-class Websites(Base):
-    __tablename__ = 'websites'
+class Website(Base):
+    __tablename__ = 'website'
     id = Column(Integer, primary_key=True)
     url = Column(String, nullable=False)
 
@@ -182,13 +182,13 @@ Session = sessionmaker(bind=engine)
 session = Session()
 
 # create a website object
-foot_fetish = Websites(url="https://ffetish.co/no_idea_where_this_leads")
+foot_fetish = Website(url="https://ffetish.co/no_idea_where_this_leads")
 
 # add object to sesssion
 session.add(foot_fetish)
 
 # fetch object from session
-session.query(Websites).filter(Websites.id == 1).first()
+session.query(Website).filter(Website.id == 1).first()
 
 # create person object relating to foot_fetish object
 person1 = Person(name="Jeff", website_id=foot_fetish.id)

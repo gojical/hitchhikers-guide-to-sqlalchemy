@@ -10,9 +10,9 @@
 ##### Terminology:
 * [`relationship`](http://docs.sqlalchemy.org/en/latest/orm/relationship_api.html) : Creates the relationship between two classes `offence = relationship('Child')`
   * [`lazy`](http://docs.sqlalchemy.org/en/latest/orm/relationship_api.html?highlight=lazy#sqlalchemy.orm.relationship.params.lazy) : if `True`, the parent object will load first, and when you call the relation a seperate SELECT query is called.
-  * [`backref`](http://docs.sqlalchemy.org/en/latest/orm/relationship_api.html#sqlalchemy.orm.relationship.params.backref) : used to create *bidirectional* access to the parent model from the child model (MtO). backref as it sounds always refers to the name of the column that can be called from the child model to access the parent object eg: `backref='parent_tablename'`.
+  * [`backref`](http://docs.sqlalchemy.org/en/latest/orm/relationship_api.html#sqlalchemy.orm.relationship.params.backref) : used to create *bidirectional* access to the parent model from the child model (MtO). backref as it sounds always refers to the name of the column that can be called from the child model to access the parent object eg: `backref='user'` this would be accessed as `Child.user` to retrieve the *Parent user object*.
   * [`back_populates`](http://docs.sqlalchemy.org/en/latest/orm/relationship_api.html#sqlalchemy.orm.relationship.params.back_populates): works similar to backref, used to create an explicit relationship form child to parent. back_populates, as it sounds ALWAYS refers to the child object populating the parent objects, eg: `back_populates='child_tablename'`.
-* `Foreignkey` : A key that links two tables together
+* `Foreignkey` : A key that links two tables together, mostly where the Parent id is stored
 
 ---
 

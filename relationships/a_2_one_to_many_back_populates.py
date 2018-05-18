@@ -23,7 +23,7 @@ class Offence(Base):
     __tablename__ = 'offences'
     id = Column(Integer, Sequence('offences_seq'), primary_key=True)
     description = Column(String(50), unique=True)
-    # accesses the patent model from the child
+    # accesses the parent model from the child
     # this gets added in order to have an MtO accesser column
     person_id = Column(Integer, ForeignKey('persons.id'))
     # creates a replationship from child to parent
@@ -41,7 +41,7 @@ Base.metadata.create_all(bind=engine)
 Session = sessionmaker(bind=engine)
 session = Session()
 
-# create a peson and add them to the session
+# create a person and add them to the session
 libre_lad = Person(name="L. Lad")
 session.add(libre_lad)
 

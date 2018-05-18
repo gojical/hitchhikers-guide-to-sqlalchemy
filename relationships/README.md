@@ -47,6 +47,7 @@ session = Session()
 #   session commands go here  #
 ###############################
 
+# commit objects to the database and close the session
 session.commit()
 session.close()
 ```
@@ -99,7 +100,7 @@ Session = sessionmaker(bind=engine)
 
 session = Session()
 
-# create a peson and add them to the session
+# create a person and add them to the session
 libre_lad = Person(name="L. Lad")
 
 # session.add(obj) will add the object to the session
@@ -218,7 +219,7 @@ session.close()
 
 ---
 
-##### B. [Many to One](http://docs.sqlalchemy.org/en/latest/orm/basic_relationships.html#many-to-one) :
+##### C. [One to One](http://docs.sqlalchemy.org/en/latest/orm/basic_relationships.html#one-to-one) :
 
 ###### Definition:
 Both the `ForeignKey` and the `relationship` are in the parent model to create a relationship with the child model. There is no object mapping (ForeginKey) in the child model. **Many** parent objects can link to **one** specific child object.  

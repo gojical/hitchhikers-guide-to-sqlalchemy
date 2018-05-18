@@ -36,7 +36,7 @@ Base.metadata.create_all(bind=engine)
 Session = sessionmaker(bind=engine)
 session = Session()
 
-# create a peson and add them to the session
+# create a person and add them to the session
 libre_lad = Person(name="L. Lad")
 session.add(libre_lad)
 

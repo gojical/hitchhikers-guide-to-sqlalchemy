@@ -1,15 +1,15 @@
 #### *A jackasses guide to SQLAlchemy <br> By LibreLad: Part-time Jackass* <br> **Relationship Basics**
 
 > ⚠️**Warning: You *WILL* need a sense of humour to read this guide!** <br>
-> A super simple guide to *One to Many, Many to One, One to One and Many to Many* Relationships <br>
+> A super simple guide on *One to Many, Many to One, One to One and Many to Many* Relationships <br>
 > Most of the links in this guide link back to the [Official SQLAlchemy documentation](http://docs.sqlalchemy.org/en/latest/orm/tutorial.html) <br>
 > Please send ~~nudes~~ commits if you find any errors or if you can make an example clearer. <br>
 
 ---
 
 ##### Terminology:
-* [`relationship`](http://docs.sqlalchemy.org/en/latest/orm/relationship_api.html) : Creates the relationship between two classes `offences = relationship('Child')`
-  * [`lazy`](http://docs.sqlalchemy.org/en/latest/orm/relationship_api.html?highlight=lazy#sqlalchemy.orm.relationship.params.lazy) : if `True`, when you query a parent object it will fetch all of the child objects related to the selected parent obj.
+* [`relationship`](http://docs.sqlalchemy.org/en/latest/orm/relationship_api.html) : Creates the relationship between two classes `offence = relationship('Child')`
+  * [`lazy`](http://docs.sqlalchemy.org/en/latest/orm/relationship_api.html?highlight=lazy#sqlalchemy.orm.relationship.params.lazy) : if `True`, the parent object will load first, and when you call the relation a seperate SELECT query is called.
   * [`backref`](http://docs.sqlalchemy.org/en/latest/orm/relationship_api.html#sqlalchemy.orm.relationship.params.backref) : used to create *bidirectional* access to the parent model from the child model (MtO). backref as it sounds always refers to the name of the column that can be called from the child model to access the parent object eg: `backref='parent_tablename'`.
   * [`back_populates`](http://docs.sqlalchemy.org/en/latest/orm/relationship_api.html#sqlalchemy.orm.relationship.params.back_populates): works similar to backref, used to create an explicit relationship form child to parent. back_populates, as it sounds ALWAYS refers to the child object populating the parent objects, eg: `back_populates='child_tablename'`.
 * `Foreignkey` : A key that links two tables together
@@ -74,21 +74,22 @@ class Person(Base):
     '''
     A simple person model with name and offences columns the id is the primary key.
     '''
-    __tablename__ = 'person'
+    __tablename__ = 'persons'
     id = Column(Integer, Sequence('person_seq'), primary_key=True)
     name = Column(String(50), nullable=False)
-    offences = relationship('Offences')
+    offences = relationship('Offence')
 
-class Offences(Base):
+class Offence(Base):
     '''
     Offence that are logged against a person.
     '''
     __tablename__ = 'offences'
     id = Column(Integer, Sequence('arrests_seq'), primary_key=True)
     description = Column(String(50), unique=True)
-    person_id = Column(Integer, ForeignKey('person.id'))
+    person_id = Column(Integer, ForeignKey('persons.id'))
 
-# create a sqlite database in memory, removed echo for a cleaner output
+# create a sqlite database in memory, add kwarg echo=True to the the
+# raw SQL queries SQLA generates
 engine = create_engine('sqlite:///:memory:')
 
 # create all of the tables
@@ -101,42 +102,43 @@ session = Session()
 
 # create a peson and add them to the session
 libre_lad = Person(name="L. Lad")
+
 # session.add(obj) will add the object to the session
-# which will implicitly process the automated database fields eg. id
 session.add(libre_lad)
 
-# get the person object back from the session this will populate
-# all of the fields that the database is in charge of eg. id
+# note that when you do a query it commits the changes to the database
+# before fetchinig the object
 libre_lad = session.query(Person).filter(Person.name == 'L. Lad').first()
 
 # add an offence and supply it with a person_id
-offence = Offences(description="Farting in public.", person_id=libre_lad.id)
+offence = Offence(description="Farting in public.", person_id=libre_lad.id)
 session.add(offence)
 
 # add an offence and supply it with a person_id
-offence = Offences(description="Looking up skirts.", person_id=libre_lad.id)
+offence = Offence(description="Looking up skirts.", person_id=libre_lad.id)
 session.add(offence)
 
 # add an offence and supply it with a person_id
-offence = Offences(description="Stealing from the homeless.", person_id=libre_lad.id)
+offence = Offence(description="Stealing from the homeless.", person_id=libre_lad.id)
 session.add(offence)
 
 # this offence has no person_id, however since we didnt make person_id
 # NOT NULL(nullable=False) this is allowed...
-offence = Offences(description="Public nudity.")
+offence = Offence(description="Public nudity.")
 session.add(offence)
 
 # lets fetch the person object from the DB
 person = session.query(Person).filter(Person.id == 1).first()
 
 # a small test to see if we get the offecnes of the selected user.
-print "%s's Offences:" % person.name
+print "%s's Offence:" % person.name
 for offence in person.offences:
     print "offence: %s" % offence.description
 
 # commit object to the database and close the session
 session.commit()
 session.close()
+
 ```
 
 ###### Notes:
@@ -218,6 +220,10 @@ session.close()
 `ForeignKey` and `relationship` are both in the parent model, the child model has no knowledge of the relationship.
 
 ---
+
+##### Lazy:
+
+If you dont use the lazy keyword areguemt and you query the parent object from the database, it will only retreve the person object. if you call the relationship in the person object to get all of the child objects, that will run a second select query to fetch all of the child objects related to the parent.
 
 ##### And you're done...
 

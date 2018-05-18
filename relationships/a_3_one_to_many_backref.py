@@ -7,25 +7,26 @@ Base = declarative_base()
 
 class Person(Base):
     '''
-    A simple person model with name and offences columns the id is the primary key.
+    A simple person model with name and offence columns the id is the primary key.
     '''
     __tablename__ = 'person'
     id = Column(Integer, Sequence('person_seq'), primary_key=True)
     name = Column(String(50), nullable=False)
-    # created a relationship with the Offences model and adds a virtual column person
+    # created a relationship with the Offence model and adds a virtual column person
     # where you can access the Person object from the Officences object
-    offences = relationship('Offences', backref="person")
+    offences = relationship('Offence', backref="person")
 
-class Offences(Base):
+class Offence(Base):
     '''
     Offence that are logged against a person.
     '''
     __tablename__ = 'offences'
     id = Column(Integer, Sequence('arrests_seq'), primary_key=True)
     description = Column(String(50), unique=True)
-    person_id = Column(Integer, ForeignKey('person.id'))
+    person_id = Column(Integer, ForeignKey('persons.id'))
 
-# create a sqlite database in memory, removed echo for a cleaner output
+# create a sqlite database in memory, add kwarg echo=True to the the
+# raw SQL queries SQLA generates
 engine = create_engine('sqlite:///:memory:')
 
 # create all of the tables
@@ -39,36 +40,36 @@ session = Session()
 libre_lad = Person(name="L. Lad")
 session.add(libre_lad)
 
-# get the person object back from the DB this will populate
-# all of the fields that the database is in charge of eg. id
+# note that when you do a query it commits the changes to the database
+# before fetchinig the object
 libre_lad = session.query(Person).filter(Person.name == 'L. Lad').first()
 
 # add an offence and supply it with a person_id
-offence = Offences(description="Farting in public.", person_id=libre_lad.id)
+offence = Offence(description="Farting in public.", person_id=libre_lad.id)
 session.add(offence)
 
 # add an offence and supply it with a person_id
-offence = Offences(description="Looking up skirts.", person_id=libre_lad.id)
+offence = Offence(description="Looking up skirts.", person_id=libre_lad.id)
 session.add(offence)
 
 # add an offence and supply it with a person_id
-offence = Offences(description="Stealing from the homeless.", person_id=libre_lad.id)
+offence = Offence(description="Stealing from the homeless.", person_id=libre_lad.id)
 session.add(offence)
 
 # this offence has no person_id, however since we didn't make person_id
 # NOT NULL this is allowed...
-offence = Offences(description="Public nudity.")
+offence = Offence(description="Public nudity.")
 session.add(offence)
 
 # lets fetch the person object from the DB
 person = session.query(Person).filter(Person.id == 1).first()
 
 # a small test to see if we get the offecnes of the selected user.
-print "%s's Offences:" % person.name
+print "%s's Offence:" % person.name
 for offence in person.offences:
     print "offence: %s" % offence.description
 
-e = session.query(Offences).filter(Offences.description == 'Stealing from the homeless.').first()
+e = session.query(Offence).filter(Offence.description == 'Stealing from the homeless.').first()
 print e.person.name
 
 # commit object to the database and close the session

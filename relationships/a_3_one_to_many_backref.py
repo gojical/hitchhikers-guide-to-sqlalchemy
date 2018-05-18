@@ -71,6 +71,6 @@ for offence in person.offences:
 e = session.query(Offence).filter(Offence.description == 'Stealing from the homeless.').first()
 print e.person.name
 
-# commit object to the database and close the session
+# commit objects to the database and close the session
 session.commit()
 session.close()

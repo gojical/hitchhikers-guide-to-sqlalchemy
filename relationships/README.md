@@ -215,7 +215,7 @@ session.close()
 ```
 
 ###### Notes:
-`ForeignKey` and `relationship` are both in the parent model, the child model has no knowledge of the relationship.
+`ForeignKey` and `relationship` are both in the parent model, the child model has no knowledge of the relationship. You can relate **one** child to many **parents** because the parent is the holder of the ForeginKey. Basic rule, whichever model holds the ForeginKey is the "Many" part of the relationship. 
 
 ---
 

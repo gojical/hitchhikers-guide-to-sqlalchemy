@@ -6,12 +6,12 @@ from sqlalchemy.ext.declarative import declarative_base
 Base = declarative_base()
 
 class Person(Base):
-    __tablename__ = 'person'
+    __tablename__ = 'users'
     id = Column(Integer, primary_key=True)
     name = Column(String, nullable=False, unique=True)
     website_id = Column(Integer, ForeignKey('website.id'))
     # creating a virtual column that will give the website object
-    # access to attached person objects
+    # access to attached user objects
     website = relationship('Website', backref='users')
 
 class Website(Base):
@@ -38,22 +38,22 @@ session.add(foot_fetish)
 # fetch object from session
 session.query(Website).filter(Website.id == 1).first()
 
-# create person object relating to foot_fetish object
-person1 = Person(name="Jeff", website_id=foot_fetish.id)
-person2 = Person(name="Jeruska", website_id=foot_fetish.id)
-person3 = Person(name="Bongani", website_id=foot_fetish.id)
+# create user object relating to foot_fetish object
+user1 = Person(name="Jeff", website_id=foot_fetish.id)
+user2 = Person(name="Jeruska", website_id=foot_fetish.id)
+user3 = Person(name="Bongani", website_id=foot_fetish.id)
 
-# add persons to the session
-session.add(person1)
-session.add(person2)
-session.add(person3)
+# add users to the session
+session.add(user1)
+session.add(user2)
+session.add(user3)
 
 # lets test our many to one by looking for the site url for Jeff
-person_query = session.query(Person).filter(Person.name == "Jeff").first()
+user_query = session.query(Person).filter(Person.name == "Jeff").first()
 
-# accessing the one website from the person object
-print "%s has been visiting" % person_query.name
-print person_query.website.url
+# accessing the one website from the user object
+print "%s has been visiting" % user_query.name
+print user_query.website.url
 
 # test bidirectional access
 for people in foot_fetish.users:

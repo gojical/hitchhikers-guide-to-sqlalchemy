@@ -33,7 +33,7 @@ Base = declarative_base()
 #    models go here  #
 ######################
 
-# create a sqlite database in memory and show me the sql queries(echo=True)
+# create a sqlite database in memory and show me the raw sql queries(echo=True)
 engine = create_engine('sqlite:///:memory:', echo=True)
 
 # create all of the tables
@@ -56,9 +56,9 @@ session.close()
 ##### A. [One to Many](http://docs.sqlalchemy.org/en/latest/orm/basic_relationships.html#one-to-many) :
 
 ###### Definition:
-A *Parent table* can have a (OtM) relationship with a *child table*, however this relationship **is not bidirectional**, the *parent* can access the data in the *child* table with a defined `relationship`. The child table holds a `ForeignKey` that references the parent's key in order to filter out which records to return.
+A *Parent table* can have a (OtM) relationship with a *child table*, however this relationship **is not bidirectional** in it's simplest form, the *parent* can access the data in the *child* table with a defined `relationship`. The child table holds a `ForeignKey` that references the parent's key in order to filter out which records to return.
 
-> 🚑 You can make OtM relationships bidirectional, see [`back_populates`](https://github.com/librelad/SQLAlchemy-Guide/blob/master/relationships/a_2_one_to_many_back_populates.py) and [`backref`](https://github.com/librelad/SQLAlchemy-Guide/blob/master/relationships/a_3_one_to_many_backref.py) examples in the relationships folder.
+> 🚑 You can make OtM relationships bidirectional, see [`back_populates`](https://github.com/librelad/SQLAlchemy-Guide/blob/master/relationships/a_2_one_to_many_back_populates.py) and [`backref`](https://github.com/librelad/SQLAlchemy-Guide/blob/master/relationships/a_3_one_to_many_backref.py) examples in the [relationships folder](https://github.com/librelad/SQLAlchemy-Guide/tree/master/relationships).
 
 ###### Example:
 

@@ -139,7 +139,8 @@ session.close()
 ```
 
 ###### Notes:
-`ForeignKey`'s link to a field (table.column). `relationship`'s link to Models.
+`ForeignKey`'s link to a field (table.column) and are accessible from the child.<br>
+`relationship`'s link to Models, they use the ForeginKey as the [mapper](https://en.wikipedia.org/wiki/Map_(mathematics) between the two Models.
 
 ---
 

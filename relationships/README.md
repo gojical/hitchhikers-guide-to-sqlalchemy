@@ -218,6 +218,80 @@ session.close()
 
 ---
 
+##### B. [Many to One](http://docs.sqlalchemy.org/en/latest/orm/basic_relationships.html#many-to-one) :
+
+###### Definition:
+Both the `ForeignKey` and the `relationship` are in the parent model to create a relationship with the child model. There is no object mapping (ForeginKey) in the child model. **Many** parent objects can link to **one** specific child object.  
+
+> 🚑 You can make MtO relationships bidirectional, see [`back_populates`](https://github.com/librelad/SQLAlchemy-Guide/blob/master/relationships/b_2_many_to_one_back_populates.py) and [`backref`](https://github.com/librelad/SQLAlchemy-Guide/blob/master/relationships/b_3_many_to_one_backref.py) examples in the relationships folder.
+
+###### Example:
+
+```python
+from sqlalchemy import create_engine, Table, Column, Integer, ForeignKey, Sequence, String
+from sqlalchemy.orm import relationship, sessionmaker
+from sqlalchemy.ext.declarative import declarative_base
+
+# base class for all of the models
+Base = declarative_base()
+
+class User(Base):
+    __tablename__ = 'users'
+    id = Column(Integer, primary_key=True)
+    name = Column(String, nullable=False, unique=True)
+    website_id = Column(Integer, ForeignKey('website.id'))
+    website = relationship('Website')
+
+class Website(Base):
+    __tablename__ = 'website'
+    id = Column(Integer, primary_key=True)
+    url = Column(String, nullable=False)
+
+# create a sqlite database in memory and show me the sql queries(echo=True)
+engine = create_engine('sqlite:///:memory:')
+
+# create all of the tables
+Base.metadata.create_all(bind=engine)
+
+# start session
+Session = sessionmaker(bind=engine)
+session = Session()
+
+# create a website object
+foot_fetish = Website(url="https://ffetish.co/no_idea_where_this_leads")
+
+# add object to session
+session.add(foot_fetish)
+
+# fetch object from session
+session.query(Website).filter(Website.id == 1).first()
+
+# create user object relating to foot_fetish object
+user1 = User(name="Jeff", website_id=foot_fetish.id)
+user2 = User(name="Jeruska", website_id=foot_fetish.id)
+user3 = User(name="Bongani", website_id=foot_fetish.id)
+
+# add users to the session
+session.add_all([user1, user2, user3])
+
+# lets test our many to one by looking for the site url for Jeff
+user_query = session.query(User).filter(User.name == "Jeff").first()
+
+# accessing the one website from the user object
+print "%s has been visiting" % user_query.name
+print user_query.website.url
+
+# commit objects to the database and close the session
+session.commit()
+session.close()
+
+```
+
+###### Notes:
+`ForeignKey` and `relationship` are both in the parent model, the child model has no knowledge of the relationship. You can relate **one** child to many **parents** because the parent is the holder of the ForeginKey. Basic rule, whichever model holds the ForeginKey is the "Many" part of the relationship.
+
+---
+
 ##### Lazy:
 
 If you dont use the lazy keyword areguemt and you query the parent object from the database, it will only retreve the person object. if you call the relationship in the person object to get all of the child objects, that will run a second select query to fetch all of the child objects related to the parent.

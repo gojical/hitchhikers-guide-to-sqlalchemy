@@ -218,3 +218,7 @@ session.close()
 `ForeignKey` and `relationship` are both in the parent model, the child model has no knowledge of the relationship.
 
 ---
+
+##### And you're done...
+
+![Deadpools_awesomeness](https://media.giphy.com/media/l4JyV4nyvJj834IZW/giphy.gif)

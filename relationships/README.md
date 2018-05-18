@@ -84,7 +84,7 @@ class Offence(Base):
     Offence that are logged against a person.
     '''
     __tablename__ = 'offences'
-    id = Column(Integer, Sequence('arrests_seq'), primary_key=True)
+    id = Column(Integer, Sequence('offences_seq'), primary_key=True)
     description = Column(String(50), unique=True)
     person_id = Column(Integer, ForeignKey('persons.id'))
 

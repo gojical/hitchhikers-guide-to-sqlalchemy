@@ -30,7 +30,7 @@ class Offence(Base):
     # use backref it's way more understandable
     person = relationship('Person', back_populates='offences')
 
-# create a sqlite database in memory, add kwarg echo=True to the the
+# create a sqlite database in memory, add kwarg echo=True to the
 # raw SQL queries SQLA generates
 engine = create_engine('sqlite:///:memory:')
 
@@ -58,7 +58,7 @@ offence1 = Offence(description="Looking up skirts.", person_id=libre_lad.id)
 # add an offence and supply it with a person_id
 offence2 = Offence(description="Stealing from the homeless.", person_id=libre_lad.id)
 
-# this offence has no person_id, however since we didnt make person_id
+# this offence has no person_id, however since we didn't make person_id
 # NOT NULL(nullable=False) this is allowed...
 offence3 = Offence(description="Public nudity.")
 
@@ -68,7 +68,7 @@ session.add_all([offence, offence1, offence2, offence3])
 # lets fetch the person object from the DB
 person = session.query(Person).filter(Person.id == 1).first()
 
-# a small test to see if we get the offecnes of the selected user.
+# a small test to see if we get the offences of the selected user.
 print "%s's Offence:" % person.name
 for offence in person.offences:
     print "offence: %s" % offence.description
@@ -76,6 +76,6 @@ for offence in person.offences:
 e = session.query(Offence).filter(Offence.description == 'Stealing from the homeless.').first()
 print e.person.name
 
-# commit object to the database and close the session
+# commit objects to the database and close the session
 session.commit()
 session.close()

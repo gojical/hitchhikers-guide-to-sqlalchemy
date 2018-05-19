@@ -223,7 +223,7 @@ session.close()
 ##### C. [One to One](http://docs.sqlalchemy.org/en/latest/orm/basic_relationships.html#one-to-one) :
 
 ###### Definition:
-A one to one relationship is a *bidirectional* relationship between the *Parent* and *Child* with a [scalar](https://en.wikipedia.org/w/index.php?title=Scalar_(mathematics)&action=edit&section=8) attribute on both sides, this means that there is a check in place to make sure the neither the *Child* nor the *Parent* can have more than one *bidirectional* relationship with the same models. We achieve this new behaviour with the [`uselist`](http://docs.sqlalchemy.org/en/latest/orm/relationship_api.html#sqlalchemy.orm.relationship.params.uselist)
+A one to one relationship is a *bidirectional* relationship between the *Parent* and *Child* with a [scalar](https://en.wikipedia.org/w/index.php?title=Scalar_(mathematics)&action=edit&section=8) attribute on both sides, this means that there is a check in place to make sure the neither the *Child* nor the *Parent* can have more than one *bidirectional* relationship with the same models. We achieve this new behaviour with the [`uselist`](http://docs.sqlalchemy.org/en/latest/orm/relationship_api.html#sqlalchemy.orm.relationship.params.uselist) kwarg.
 
 ###### Example:
 

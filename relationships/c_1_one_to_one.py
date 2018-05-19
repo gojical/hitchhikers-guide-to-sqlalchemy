@@ -13,7 +13,7 @@ class Humanoid(Base):
     complaint = Column(String, nullable=False)
     # create a relationship with the child model BarCode
     # using uselist=False to insure that the relationship is scalar
-    # using back_populates to allow a bidirectional relatioship
+    # using back_populates to allow a bidirectional relationship
     # using lazy=False, to load(query) the BarCode child with the Humanoid obj
     barcode = relationship('BarCode', uselist=False, back_populates="humanoid", lazy=False)
 
@@ -28,7 +28,7 @@ class BarCode(Base):
     humanoid_id = Column(ForeignKey('humanoids.id'), nullable=False)
     # create a relationship with the Parent model in order to access
     # the parent object from the child
-    # Note that the back_populate args  match the opposite column names
+    # Note that the back_populates args  match the opposite column names
     # This is how the relationship is formed
     humanoid = relationship('Humanoid', uselist=False, back_populates="barcode")
 

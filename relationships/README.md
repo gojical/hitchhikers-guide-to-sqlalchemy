@@ -225,6 +225,8 @@ session.close()
 ###### Definition:
 A one to one relationship is a *bidirectional* relationship between the *Parent* and *Child* with a [scalar](https://en.wikipedia.org/w/index.php?title=Scalar_(mathematics)&action=edit&section=8) attribute on both sides, this means that there is a check in place to make sure the neither the *Child* nor the *Parent* can have more than one *bidirectional* relationship with the same models. We achieve this new behaviour with the [`uselist`](http://docs.sqlalchemy.org/en/latest/orm/relationship_api.html#sqlalchemy.orm.relationship.params.uselist) kwarg.
 
+> 🚑 OtO relationships use back_populates and backref by default to achieve the OtO relationship.
+
 ###### Example:
 
 ```python
@@ -243,7 +245,7 @@ class Humanoid(Base):
     complaint = Column(String, nullable=False)
     # create a relationship with the child model BarCode
     # using uselist=False to insure that the relationship is scalar
-    # using back_populates to allow a bidirectional relatioship
+    # using back_populates to allow a bidirectional relationship
     # using lazy=False, to load(query) the BarCode child with the Humanoid obj
     barcode = relationship('BarCode', uselist=False, back_populates="humanoid", lazy=False)
 
@@ -258,7 +260,7 @@ class BarCode(Base):
     humanoid_id = Column(ForeignKey('humanoids.id'), nullable=False)
     # create a relationship with the Parent model in order to access
     # the parent object from the child
-    # Note that the back_populate args  match the opposite column names
+    # Note that the back_populates args  match the opposite column names
     # This is how the relationship is formed
     humanoid = relationship('Humanoid', uselist=False, back_populates="barcode")
 
@@ -320,14 +322,16 @@ session.close()
 ```
 
 ###### Notes:
-One to One relationships are interesting because they incorporate `back_populate` or `backref` to create a bidirectional relationship between the two objects. The setup is simple if you have gone over OtM and MtO 😄.
+One to One relationships are interesting because they incorporate `back_populates` or `backref` to create a bidirectional relationship between the two objects. The setup is simple if you have gone over OtM and MtO 😄.
 
 ---
 
 ##### D. [Many to Many](http://docs.sqlalchemy.org/en/latest/orm/basic_relationships.html#many-to-many) :
 
 ###### Definition:
-A one to one relationship is a *bidirectional* relationship between the *Parent* and *Child* with a [scalar](https://en.wikipedia.org/w/index.php?title=Scalar_(mathematics)&action=edit&section=8) attribute on both sides, this means that there is a check in place to make sure the neither the *Child* nor the *Parent* can have more than one *bidirectional* relationship with the same models. We achieve this new behaviour with the [`uselist`](http://docs.sqlalchemy.org/en/latest/orm/relationship_api.html#sqlalchemy.orm.relationship.params.uselist) kwarg.
+A Many to Many relationship allows *parent* classes to have multiple *children* as well as share *children* objects. We create mapper [table](http://docs.sqlalchemy.org/en/latest/core/metadata.html#sqlalchemy.schema.Table) to keep track of which *parents* are related to specific *children*, we also add the [`secondary`](http://docs.sqlalchemy.org/en/latest/orm/relationship_api.html#sqlalchemy.orm.relationship.params.secondary) kwarg to the relationship definition to show the model where the mapper table is.
+
+> 🚑 You can make MtM relationships bidirectional, see [`back_populates`](https://github.com/librelad/SQLAlchemy-Guide/blob/master/relationships/d_2_many_to_many_back_populates.py) and [`backref`](https://github.com/librelad/SQLAlchemy-Guide/blob/master/relationships/d_3_many_to_many_backref.py) examples in the [relationships folder](https://github.com/librelad/SQLAlchemy-Guide/tree/master/relationships).
 
 ###### Example:
 
@@ -339,32 +343,25 @@ from sqlalchemy.ext.declarative import declarative_base
 # base class for all of the models
 Base = declarative_base()
 
-class Humanoid(Base):
-    __tablename__ = 'humanoids'
-    id = Column(Integer, Sequence('humanoid_seq'), primary_key=True)
-    name = Column(String, nullable=False)
-    date_initiated = Column(DateTime, default=func.now())
-    complaint = Column(String, nullable=False)
-    # create a relationship with the child model BarCode
-    # using uselist=False to insure that the relationship is scalar
-    # using back_populates to allow a bidirectional relatioship
-    # using lazy=False, to load(query) the BarCode child with the Humanoid obj
-    barcode = relationship('BarCode', uselist=False, back_populates="humanoid", lazy=False)
+hc_mapper = Table(
+    'hc_mapper',
+    Base.metadata,
+    Column('human_id', ForeignKey('humans.id')),
+    Column('cat_id', ForeignKey('cats.id'))
+)
 
-class BarCode(Base):
-    __tablename__ = 'overlord_barcodes'
-    id = Column(Integer, Sequence('overload_bc_seq'), primary_key=True)
-    actual = Column(String, nullable=False, unique=True)
-    encryption_type = Column(String)
-    # create a ForeginKey to map the Parent(Humanoid) object to this Child obj
-    # set nullable=False which means that a parent id is
-    # required to create a BarCode obj
-    humanoid_id = Column(ForeignKey('humanoids.id'), nullable=False)
-    # create a relationship with the Parent model in order to access
-    # the parent object from the child
-    # Note that the back_populate args  match the opposite column names
-    # This is how the relationship is formed
-    humanoid = relationship('Humanoid', uselist=False, back_populates="barcode")
+class Human(Base):
+    __tablename__ = "humans"
+    id = Column(Integer, Sequence('human_seq'), primary_key=True)
+    name = Column(String)
+    # setting lazy=False for a cleaner output
+    cats = relationship('Cat', secondary="hc_mapper", lazy=False)
+
+class Cat(Base):
+    __tablename__ = "cats"
+    id = Column(Integer, Sequence('cat_seq'), primary_key=True)
+    name = Column(String)
+
 
 # create a sqlite database in memory and show me the raw sql queries(echo=True)
 engine = create_engine('sqlite:///:memory:', echo=True)
@@ -376,55 +373,70 @@ Base.metadata.create_all(bind=engine)
 Session = sessionmaker(bind=engine)
 session = Session()
 
-# create a humanoid object
-bot1 = Humanoid(name="HalTron4000",
-                complaint="Bot keep flipping of little children.")
-session.add(bot1)
+# This is an example of One Parent to Many Children
+# create a human object and populate it with data
+libre = Human()
+libre.name = "LibreLad"
 
-# session.commit() will update the previous objects
-# in this case bot1 which will fill in all of the
-# fields that the database is responsible for.
+cat1 = Cat()
+cat1.name = "Scratches"
+
+cat2 = Cat()
+cat2.name = "Patches"
+
+cat3 = Cat()
+cat3.name = "Wombat"
+
+# relate the cats to the human
+# since we added the cats to the human object
+# the session will add the implicitly
+libre.cats.extend([cat1, cat2, cat3])
+
+# add libre to the session
+session.add(libre)
+
+# lets create a new user that will relate to some of the cats
+# that libre relates to
+libre_las = Human()
+libre_las.name = "LibreLas"
+
+# relate cats to libre_las
+libre_las.cats.extend([cat1, cat3])
+
+# add libre_las to the session
+session.add(libre_las)
+
+# commit the session
 session.commit()
 
-# create a barcode object an add the humanoid.id to the params
-barcode1 = BarCode(actual="AJX9w8r79w87Tskdjflsdfl47593457#009",
-                   encryption_type="SHA256",
-                   humanoid_id=bot1.id)
+# lets get the relations of the cats from the user
+def get_cats(human_obj):
+    print "=================++++++++++++================="
+    print "Begin query for parent and children"
+    # this(query) is just to make sure that the object doesn't lazy load
+    # there is no real merit to using this in
+    # a real world scenario
+    human_obj = session.query(Human).filter(Human.id == human_obj.id).first()
+    print "----------------------------------------------"
+    print "Human: %s's cats:" % human_obj.name
+    for cat in human_obj.cats:
+        print "cat_id: %s | cat_name: %s" % (cat.id, cat.name)
+    print "=================++++++++++++=================\n"
 
-# add and commit the barcode obj
-session.add(barcode1)
-session.commit()
+get_cats(libre)
+get_cats(libre_las)
 
-# a simple function to process the bot objects
-def bot_info(bot_obj):
-    print "===============++++==============="
-    if not isinstance(bot_obj, Humanoid):
-        print "The provided object is not a bot :("
-    else:
-        print "Now analysing bot id: %s" % bot_obj.id
-        print "Bot Name: %s" % bot_obj.name
-        print "Bot barcode: %s" % bot_obj.barcode.actual
-        print "Initial Date bot came online: %s" % bot_obj.date_initiated
-        print "Is bot Encrypted: %s" % bool(len(bot_obj.barcode.encryption_type))
-        print "Bot complaint: %s" % bot_obj.complaint
-        print "Analysis is finished."
-    print "===============++++===============\n"
+# lets see what the mapper table looks like
+mapper_table = session.query(hc_mapper).all()
+for field in mapper_table:
+    print "human_id: %s | cat_id: %s" % (field.human_id, field.cat_id)
 
-# lets access some data from the bot:
-boj = session.query(Humanoid).filter(Humanoid.complaint is not None).first()
-bot_info(boj)
-
-# safe test:
-bot_info(barcode1)
-
-# commit objects to the database and close the session
-session.commit()
+# close the session
 session.close()
-
 ```
 
 ###### Notes:
-One to One relationships are interesting because they incorporate `back_populate` or `backref` to create a bidirectional relationship between the two objects. The setup is simple if you have gone over OtM and MtO 😄.
+Instead of adding the `id` in both columns of mapper table, we used `parent.relationship.extend([child_obj, child_obj2])` to add *multiple children objects* to the *Parent* object. You can also use `parent.relationship.append(child_obj)` to add 1 object.
 
 ---
 

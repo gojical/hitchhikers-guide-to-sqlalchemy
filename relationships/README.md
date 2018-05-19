@@ -329,7 +329,7 @@ One to One relationships are interesting because they incorporate `back_populate
 ##### D. [Many to Many](http://docs.sqlalchemy.org/en/latest/orm/basic_relationships.html#many-to-many) :
 
 ###### Definition:
-A Many to Many relationship allows *parent* classes to have multiple *children* as well as share *children* objects. We create mapper [table](http://docs.sqlalchemy.org/en/latest/core/metadata.html#sqlalchemy.schema.Table) to keep track of which *parents* are related to specific *children*, we also add the [`secondary`](http://docs.sqlalchemy.org/en/latest/orm/relationship_api.html#sqlalchemy.orm.relationship.params.secondary) kwarg to the relationship definition to show the model where the mapper table is.
+A Many to Many relationship allows *parent* classes to have multiple *children* as well as share *children* objects. We create a mapper [table](http://docs.sqlalchemy.org/en/latest/core/metadata.html#sqlalchemy.schema.Table) to keep track of which *parents* are related to specific *children*, we also add the [`secondary`](http://docs.sqlalchemy.org/en/latest/orm/relationship_api.html#sqlalchemy.orm.relationship.params.secondary) kwarg to the relationship definition to show the model where the mapper table is.
 
 > 🚑 You can make MtM relationships bidirectional, see [`back_populates`](https://github.com/librelad/SQLAlchemy-Guide/blob/master/relationships/d_2_many_to_many_back_populates.py) and [`backref`](https://github.com/librelad/SQLAlchemy-Guide/blob/master/relationships/d_3_many_to_many_backref.py) examples in the [relationships folder](https://github.com/librelad/SQLAlchemy-Guide/tree/master/relationships).
 

@@ -302,6 +302,7 @@ def bot_info(bot_obj):
         print "Bot barcode: %s" % bot_obj.barcode.actual
         print "Initial Date bot came online: %s" % bot_obj.date_initiated
         print "Is bot Encrypted: %s" % bool(len(bot_obj.barcode.encryption_type))
+        print "Bot complaint: %s" % bot_obj.complaint
         print "Analysis is finished."
     print "===============++++===============\n"
 

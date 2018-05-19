@@ -439,7 +439,7 @@ session.close()
 ###### Notes:
 Instead of adding the `id` in both columns of mapper table, we used `parent.relationship.extend([child_obj, child_obj2])` to add *multiple children objects* to the *Parent* object. You can also use `parent.relationship.append(child_obj)` to add 1 object.
 
-The `secondary` kwarg can also be a lambda like so `secondary=lambda: mapper_table_obj`, the argument only runs when a mapper is needed, so long as you provide a valid mapper_table object when it is needed.
+The `secondary` kwarg can also be a lambda like so `secondary=lambda: mapper_table_obj`, the argument only runs when a mapper is needed, so long as you provide a valid mapper_table object when it is needed. [See example here](https://github.com/librelad/SQLAlchemy-Guide/blob/master/relationships/d_4_secondary_lambda.py)
 
 ---
 

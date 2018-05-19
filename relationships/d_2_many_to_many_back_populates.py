@@ -19,12 +19,15 @@ class Human(Base):
     # setting lazy=False for a cleaner output
     # this will load all of the child objects when the parent
     # is queried
-    cats = relationship('Cat', secondary="hc_mapper", lazy=False)
+    # add back_populates to have a bidirectional relationship
+    cats = relationship('Cat', secondary="hc_mapper", back_populates='humans', lazy=False)
 
 class Cat(Base):
     __tablename__ = "cats"
     id = Column(Integer, Sequence('cat_seq'), primary_key=True)
     name = Column(String)
+    # create a relationship with human obj
+    humans = relationship('Human', secondary=hc_mapper, back_populates='cats')
 
 
 # create a sqlite database in memory and show me the raw sql queries(echo=True)
@@ -94,6 +97,13 @@ get_cats(libre_las)
 mapper_table = session.query(hc_mapper).all()
 for field in mapper_table:
     print "human_id: %s | cat_id: %s" % (field.human_id, field.cat_id)
+
+# test back_populates bidirectional abilities
+cat_obj = session.query(Cat).filter(Cat.name == "Wombat").first()
+
+# show me the relationship between this cat and humans
+for human in cat_obj.humans:
+    print "%(cat)s knows %(human)s" % dict(cat=cat_obj.name, human=human.name)
 
 # close the session
 session.close()

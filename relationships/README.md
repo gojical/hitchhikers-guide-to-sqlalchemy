@@ -355,6 +355,8 @@ class Human(Base):
     id = Column(Integer, Sequence('human_seq'), primary_key=True)
     name = Column(String)
     # setting lazy=False for a cleaner output
+    # this will load all of the child objects when the parent
+    # is queried
     cats = relationship('Cat', secondary="hc_mapper", lazy=False)
 
 class Cat(Base):

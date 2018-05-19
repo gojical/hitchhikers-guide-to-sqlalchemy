@@ -320,7 +320,7 @@ session.close()
 ```
 
 ###### Notes:
-One to One relationships are interesting because the incorporate `back_populate` or `backref` to create a bidirectional relationship between the two objects. The setup is simple if you have gone over OtM and MtO 😄.
+One to One relationships are interesting because they incorporate `back_populate` or `backref` to create a bidirectional relationship between the two objects. The setup is simple if you have gone over OtM and MtO 😄.
 
 ---
 

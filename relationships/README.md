@@ -58,7 +58,7 @@ session.close()
 ##### A. [One to Many](http://docs.sqlalchemy.org/en/latest/orm/basic_relationships.html#one-to-many) :
 
 ###### Definition:
-A *Parent table* can have a (OtM) relationship with a *child table*, however this relationship **is not bidirectional** in it's simplest form, the *parent* can access the data in the *child* table with a defined `relationship`. The child table holds a `ForeignKey` that references the parent's key (`id`) in order to filter out which records to return.
+A *Parent* object can have a (OtM) relationship with a *Child* object, however this relationship **is not bidirectional** in it's simplest form, the *Parent* object can access the data in the *Child* object with a defined `relationship`. The *child* object holds a `ForeignKey` that references the *parent's* objects key(`id`) in order to filter out which records to return.
 
 > 🚑 You can make OtM relationships bidirectional, see [`back_populates`](https://github.com/librelad/SQLAlchemy-Guide/blob/master/relationships/a_2_one_to_many_back_populates.py) and [`backref`](https://github.com/librelad/SQLAlchemy-Guide/blob/master/relationships/a_3_one_to_many_backref.py) examples in the [relationships folder](https://github.com/librelad/SQLAlchemy-Guide/tree/master/relationships).
 
@@ -149,7 +149,7 @@ session.close()
 ##### B. [Many to One](http://docs.sqlalchemy.org/en/latest/orm/basic_relationships.html#many-to-one) :
 
 ###### Definition:
-Both the `ForeignKey` and the `relationship` are in the parent model to create a relationship with the child model. There is no object mapping (ForeginKey) in the child model. **Many** parent objects can link to **one** specific child object.  
+Both the `ForeignKey` and the `relationship` are in the *parent* object to create a relationship with the *child* object. There is no object mapping (ForeginKey) in the child model. **Many** parent objects can link to **one** specific child object.  
 
 > 🚑 You can make MtO relationships bidirectional, see [`back_populates`](https://github.com/librelad/SQLAlchemy-Guide/blob/master/relationships/b_2_many_to_one_back_populates.py) and [`backref`](https://github.com/librelad/SQLAlchemy-Guide/blob/master/relationships/b_3_many_to_one_backref.py) examples in the relationships folder.
 
@@ -223,7 +223,7 @@ session.close()
 ##### C. [One to One](http://docs.sqlalchemy.org/en/latest/orm/basic_relationships.html#one-to-one) :
 
 ###### Definition:
-A one to one relationship is a *bidirectional* relationship between the *Parent* and *Child* with a [scalar](https://en.wikipedia.org/w/index.php?title=Scalar_(mathematics)&action=edit&section=8) attribute on both sides, this means that there is a check in place to make sure the neither the *Child* nor the *Parent* can have more than one *bidirectional* relationship with the same models. We achieve this new behaviour with the [`uselist`](http://docs.sqlalchemy.org/en/latest/orm/relationship_api.html#sqlalchemy.orm.relationship.params.uselist) kwarg.
+A one to one relationship is a *bidirectional* relationship between the *Parent* and *Child* objects with a [scalar](https://en.wikipedia.org/w/index.php?title=Scalar_(mathematics)&action=edit&section=8) attribute on both sides, this means that there is a check in place to make sure the neither the *Child* nor the *Parent* object can have more than one *bidirectional* relationship with the same models. We achieve this new behaviour with the [`uselist`](http://docs.sqlalchemy.org/en/latest/orm/relationship_api.html#sqlalchemy.orm.relationship.params.uselist) kwarg.
 
 > 🚑 OtO relationships use back_populates and backref by default to achieve the OtO relationship.
 
@@ -329,7 +329,7 @@ One to One relationships are interesting because they incorporate `back_populate
 ##### D. [Many to Many](http://docs.sqlalchemy.org/en/latest/orm/basic_relationships.html#many-to-many) :
 
 ###### Definition:
-A Many to Many relationship allows *parent* classes to have multiple *children* as well as share *children* objects. We create a mapper [table](http://docs.sqlalchemy.org/en/latest/core/metadata.html#sqlalchemy.schema.Table) to keep track of which *parents* are related to specific *children*, we also add the [`secondary`](http://docs.sqlalchemy.org/en/latest/orm/relationship_api.html#sqlalchemy.orm.relationship.params.secondary) kwarg to the relationship definition to show the model where the mapper table is.
+A Many to Many relationship allows *parent* objects to have multiple *children* objects as well as share *children* objects. We create a mapper [table](http://docs.sqlalchemy.org/en/latest/core/metadata.html#sqlalchemy.schema.Table) to keep track of which *parents* are related to specific *children*, we also add the [`secondary`](http://docs.sqlalchemy.org/en/latest/orm/relationship_api.html#sqlalchemy.orm.relationship.params.secondary) kwarg to the relationship definition to show the model where the mapper table is.
 
 > 🚑 You can make MtM relationships bidirectional, see [`back_populates`](https://github.com/librelad/SQLAlchemy-Guide/blob/master/relationships/d_2_many_to_many_back_populates.py) and [`backref`](https://github.com/librelad/SQLAlchemy-Guide/blob/master/relationships/d_3_many_to_many_backref.py) examples in the [relationships folder](https://github.com/librelad/SQLAlchemy-Guide/tree/master/relationships).
 

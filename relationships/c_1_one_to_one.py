@@ -44,7 +44,7 @@ session = Session()
 
 # create a humanoid object
 bot1 = Humanoid(name="HalTron4000",
-                complaint="Bot stinks! Literally!")
+                complaint="Bot keep flipping of little children.")
 session.add(bot1)
 
 # session.commit() will update the previous objects

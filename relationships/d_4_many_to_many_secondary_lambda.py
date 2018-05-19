@@ -5,11 +5,6 @@ from sqlalchemy.ext.declarative import declarative_base
 # base class for all of the models
 Base = declarative_base()
 
-class Cat(Base):
-    __tablename__ = "cats"
-    id = Column(Integer, Sequence('cat_seq'), primary_key=True)
-    name = Column(String)
-
 class Human(Base):
     __tablename__ = "humans"
     id = Column(Integer, Sequence('human_seq'), primary_key=True)
@@ -24,6 +19,11 @@ class Human(Base):
     # sqlalchemy will implicitly create a relationship
     # with secondary arguement
     cats = relationship('Cat', secondary=lambda: hc_mapper, backref="humans", lazy=False)
+
+class Cat(Base):
+    __tablename__ = "cats"
+    id = Column(Integer, Sequence('cat_seq'), primary_key=True)
+    name = Column(String)
 
 # create a sqlite database in memory and show me the raw sql queries(echo=True)
 engine = create_engine('sqlite:///:memory:', echo=True)

@@ -37,7 +37,6 @@ Base.metadata.create_all(bind=engine)
 Session = sessionmaker(bind=engine)
 session = Session()
 
-# This is an example of One Parent to Many Children
 # create a human object and populate it with data
 libre = Human()
 libre.name = "LibreLad"

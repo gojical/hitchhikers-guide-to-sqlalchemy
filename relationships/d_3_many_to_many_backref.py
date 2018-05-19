@@ -19,15 +19,18 @@ class Human(Base):
     # setting lazy=False for a cleaner output
     # this will load all of the child objects when the parent
     # is queried
-    # add back_populates to have a bidirectional relationship
-    cats = relationship('Cat', secondary="hc_mapper", back_populates='humans', lazy=False)
+
+    # create a bidirectional relationship with the cat object,
+    # when using backref you dont need to specify any
+    # relationships on the child side
+    # sqlalchemy will implicitly create a relationship
+    # with secondary arguement
+    cats = relationship('Cat', secondary="hc_mapper", backref='humans', lazy=False)
 
 class Cat(Base):
     __tablename__ = "cats"
     id = Column(Integer, Sequence('cat_seq'), primary_key=True)
     name = Column(String)
-    # create a relationship with human obj
-    humans = relationship('Human', secondary=hc_mapper, back_populates='cats')
 
 
 # create a sqlite database in memory and show me the raw sql queries(echo=True)

@@ -12,7 +12,7 @@ class Humanoid(Base):
     date_initiated = Column(DateTime, default=func.now())
     complaint = Column(String, nullable=False)
     # create a relationship with the child model BarCode
-    # using uselist=Flase to insure that the relationship is scalar
+    # using uselist=False to insure that the relationship is scalar
     # using back_populates to allow a bidirectional relatioship
     # using lazy=False, to load(query) the BarCode child with the Humanoid obj
     barcode = relationship('BarCode', uselist=False, back_populates="humanoid", lazy=False)

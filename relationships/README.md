@@ -9,9 +9,10 @@
 
 ##### Terminology:
 * [`relationship`](http://docs.sqlalchemy.org/en/latest/orm/relationship_api.html) : Creates the relationship between two classes `offence = relationship('Child')`
-  * [`lazy`](http://docs.sqlalchemy.org/en/latest/orm/relationship_api.html?highlight=lazy#sqlalchemy.orm.relationship.params.lazy) : if `True`, the *parent object* will be queried as well as all of the child objects, this means that the query is longer because it has to fetch all of the *child objects* related to the parent. More on this later 😏
+  * [`lazy`](http://docs.sqlalchemy.org/en/latest/orm/relationship_api.html?highlight=lazy#sqlalchemy.orm.relationship.params.lazy) : if `True`, Only the parent object in question will load, once the object is accessed additional SELECT queries will be called to fetch the other objects data. More on this later 😏
   * [`backref`](http://docs.sqlalchemy.org/en/latest/orm/relationship_api.html#sqlalchemy.orm.relationship.params.backref) : used to create *bidirectional* access to the parent model from the child model (MtO). backref as it sounds always refers to the name of the column that will be called from the child model to access the parent object eg: `backref='user'` this would be accessed as `child_obj.user` to retrieve the *Parent user object*.
   * [`back_populates`](http://docs.sqlalchemy.org/en/latest/orm/relationship_api.html#sqlalchemy.orm.relationship.params.back_populates): works similar to backref, used to create an explicit relationship form child to parent. back_populates, as it sounds always refers to the *child object* relating to the *parent object*, eg: `back_populates='user'` this would be accessed the same a the eg. above.
+  * [`uselist`](http://docs.sqlalchemy.org/en/latest/orm/relationship_api.html#sqlalchemy.orm.relationship.params.uselist): is a boolean flag used to decide weather a relationship between the *Parent* and *Child* can be in list form or scalar(singular) form. This is used in *One to One* relationships.
 * `Foreignkey` : A key that links two tables together. It's value is usually the parent `id`
 
 ---
@@ -22,7 +23,7 @@
 > 🚑 The following examples were run in a *virtual environment* with `sqlalchemy` installed.
 
 ```python
-from sqlalchemy import create_engine, Table, Column, Integer, ForeignKey, Sequence, String
+from sqlalchemy import create_engine, Table, Column, Integer, ForeignKey, Sequence, String, func, DateTime
 from sqlalchemy.orm import relationship, sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 
@@ -57,14 +58,14 @@ session.close()
 ##### A. [One to Many](http://docs.sqlalchemy.org/en/latest/orm/basic_relationships.html#one-to-many) :
 
 ###### Definition:
-A *Parent table* can have a (OtM) relationship with a *child table*, however this relationship **is not bidirectional** in it's simplest form, the *parent* can access the data in the *child* table with a defined `relationship`. The child table holds a `ForeignKey` that references the parent's key in order to filter out which records to return.
+A *Parent table* can have a (OtM) relationship with a *child table*, however this relationship **is not bidirectional** in it's simplest form, the *parent* can access the data in the *child* table with a defined `relationship`. The child table holds a `ForeignKey` that references the parent's key (`id`) in order to filter out which records to return.
 
 > 🚑 You can make OtM relationships bidirectional, see [`back_populates`](https://github.com/librelad/SQLAlchemy-Guide/blob/master/relationships/a_2_one_to_many_back_populates.py) and [`backref`](https://github.com/librelad/SQLAlchemy-Guide/blob/master/relationships/a_3_one_to_many_backref.py) examples in the [relationships folder](https://github.com/librelad/SQLAlchemy-Guide/tree/master/relationships).
 
 ###### Example:
 
 ```python
-from sqlalchemy import create_engine, Table, Column, Integer, ForeignKey, Sequence, String
+from sqlalchemy import create_engine, Table, Column, Integer, ForeignKey, Sequence, String, func, DateTime
 from sqlalchemy.orm import relationship, sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 
@@ -155,7 +156,7 @@ Both the `ForeignKey` and the `relationship` are in the parent model to create a
 ###### Example:
 
 ```python
-from sqlalchemy import create_engine, Table, Column, Integer, ForeignKey, Sequence, String
+from sqlalchemy import create_engine, Table, Column, Integer, ForeignKey, Sequence, String, func, DateTime
 from sqlalchemy.orm import relationship, sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 
@@ -215,21 +216,21 @@ session.close()
 ```
 
 ###### Notes:
-`ForeignKey` and `relationship` are both in the parent model, the child model has no knowledge of the relationship. You can relate **one** child to many **parents** because the parent is the holder of the ForeginKey. Basic rule, whichever model holds the ForeginKey is the "Many" part of the relationship.
+`ForeignKey` and `relationship` are both in the parent model, the child model has no knowledge of the relationship. You can relate **one** child to many **parents** because the parent is the holder of the ForeginKey. Basic rule, whichever model holds the ForeginKey is the "Many" part of the relationship in most cases.
 
 ---
 
 ##### C. [One to One](http://docs.sqlalchemy.org/en/latest/orm/basic_relationships.html#one-to-one) :
 
 ###### Definition:
-Both the `ForeignKey` and the `relationship` are in the parent model to create a relationship with the child model. There is no object mapping (ForeginKey) in the child model. **Many** parent objects can link to **one** specific child object.  
+A one to one relationship is a *bidirectional* relationship between the *Parent* and *Child* with a [scalar](https://en.wikipedia.org/w/index.php?title=Scalar_(mathematics)&action=edit&section=8) attribute on both sides, this means that there is a check in place to make sure the neither the *Child* nor the *Parent* can have more than one *bidirectional* relationship with the same models. We achieve this new behaviour with the [`uselist`](http://docs.sqlalchemy.org/en/latest/orm/relationship_api.html#sqlalchemy.orm.relationship.params.uselist)
 
 > 🚑 You can make MtO relationships bidirectional, see [`back_populates`](https://github.com/librelad/SQLAlchemy-Guide/blob/master/relationships/b_2_many_to_one_back_populates.py) and [`backref`](https://github.com/librelad/SQLAlchemy-Guide/blob/master/relationships/b_3_many_to_one_backref.py) examples in the relationships folder.
 
 ###### Example:
 
 ```python
-from sqlalchemy import create_engine, Table, Column, Integer, ForeignKey, Sequence, String
+from sqlalchemy import create_engine, Table, Column, Integer, ForeignKey, Sequence, String, func, DateTime
 from sqlalchemy.orm import relationship, sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 

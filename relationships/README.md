@@ -225,8 +225,6 @@ session.close()
 ###### Definition:
 A one to one relationship is a *bidirectional* relationship between the *Parent* and *Child* with a [scalar](https://en.wikipedia.org/w/index.php?title=Scalar_(mathematics)&action=edit&section=8) attribute on both sides, this means that there is a check in place to make sure the neither the *Child* nor the *Parent* can have more than one *bidirectional* relationship with the same models. We achieve this new behaviour with the [`uselist`](http://docs.sqlalchemy.org/en/latest/orm/relationship_api.html#sqlalchemy.orm.relationship.params.uselist)
 
-> 🚑 You can make MtO relationships bidirectional, see [`back_populates`](https://github.com/librelad/SQLAlchemy-Guide/blob/master/relationships/b_2_many_to_one_back_populates.py) and [`backref`](https://github.com/librelad/SQLAlchemy-Guide/blob/master/relationships/b_3_many_to_one_backref.py) examples in the relationships folder.
-
 ###### Example:
 
 ```python
@@ -237,20 +235,35 @@ from sqlalchemy.ext.declarative import declarative_base
 # base class for all of the models
 Base = declarative_base()
 
-class User(Base):
-    __tablename__ = 'users'
-    id = Column(Integer, primary_key=True)
-    name = Column(String, nullable=False, unique=True)
-    website_id = Column(Integer, ForeignKey('website.id'))
-    website = relationship('Website')
+class Humanoid(Base):
+    __tablename__ = 'humanoids'
+    id = Column(Integer, Sequence('humanoid_seq'), primary_key=True)
+    name = Column(String, nullable=False)
+    date_initiated = Column(DateTime, default=func.now())
+    complaint = Column(String, nullable=False)
+    # create a relationship with the child model BarCode
+    # using uselist=Flase to insure that the relationship is scalar
+    # using back_populates to allow a bidirectional relatioship
+    # using lazy=False, to load(query) the BarCode child with the Humanoid obj
+    barcode = relationship('BarCode', uselist=False, back_populates="humanoid", lazy=False)
 
-class Website(Base):
-    __tablename__ = 'website'
-    id = Column(Integer, primary_key=True)
-    url = Column(String, nullable=False)
+class BarCode(Base):
+    __tablename__ = 'overlord_barcodes'
+    id = Column(Integer, Sequence('overload_bc_seq'), primary_key=True)
+    actual = Column(String, nullable=False, unique=True)
+    encryption_type = Column(String)
+    # create a ForeginKey to map the Parent(Humanoid) object to this Child obj
+    # set nullable=False which means that a parent id is
+    # required to create a BarCode obj
+    humanoid_id = Column(ForeignKey('humanoids.id'), nullable=False)
+    # create a relationship with the Parent model in order to access
+    # the parent object from the child
+    # Note that the back_populate args  match the opposite column names
+    # This is how the relationship is formed
+    humanoid = relationship('Humanoid', uselist=False, back_populates="barcode")
 
-# create a sqlite database in memory and show me the sql queries(echo=True)
-engine = create_engine('sqlite:///:memory:')
+# create a sqlite database in memory and show me the raw sql queries(echo=True)
+engine = create_engine('sqlite:///:memory:', echo=True)
 
 # create all of the tables
 Base.metadata.create_all(bind=engine)
@@ -259,29 +272,45 @@ Base.metadata.create_all(bind=engine)
 Session = sessionmaker(bind=engine)
 session = Session()
 
-# create a website object
-foot_fetish = Website(url="https://ffetish.co/no_idea_where_this_leads")
+# create a humanoid object
+bot1 = Humanoid(name="HalTron4000",
+                complaint="Bot stinks! Literally!")
+session.add(bot1)
 
-# add object to session
-session.add(foot_fetish)
+# session.commit() will update the previous objects
+# in this case bot1 which will fill in all of the
+# fields that the database is responsible for.
+session.commit()
 
-# fetch object from session
-session.query(Website).filter(Website.id == 1).first()
+# create a barcode object an add the humanoid.id to the params
+barcode1 = BarCode(actual="AJX9w8r79w87Tskdjflsdfl47593457#009",
+                   encryption_type="SHA256",
+                   humanoid_id=bot1.id)
 
-# create user object relating to foot_fetish object
-user1 = User(name="Jeff", website_id=foot_fetish.id)
-user2 = User(name="Jeruska", website_id=foot_fetish.id)
-user3 = User(name="Bongani", website_id=foot_fetish.id)
+# add and commit the barcode obj
+session.add(barcode1)
+session.commit()
 
-# add users to the session
-session.add_all([user1, user2, user3])
+# a simple function to process the bot objects
+def bot_info(bot_obj):
+    print "===============++++==============="
+    if not isinstance(bot_obj, Humanoid):
+        print "The provided object is not a bot :("
+    else:
+        print "Now analysing bot id: %s" % bot_obj.id
+        print "Bot Name: %s" % bot_obj.name
+        print "Bot barcode: %s" % bot_obj.barcode.actual
+        print "Initial Date bot came online: %s" % bot_obj.date_initiated
+        print "Is bot Encrypted: %s" % bool(len(bot_obj.barcode.encryption_type))
+        print "Analysis is finished."
+    print "===============++++===============\n"
 
-# lets test our many to one by looking for the site url for Jeff
-user_query = session.query(User).filter(User.name == "Jeff").first()
+# lets access some data from the bot:
+boj = session.query(Humanoid).filter(Humanoid.complaint is not None).first()
+bot_info(boj)
 
-# accessing the one website from the user object
-print "%s has been visiting" % user_query.name
-print user_query.website.url
+# safe test:
+bot_info(barcode1)
 
 # commit objects to the database and close the session
 session.commit()
@@ -290,7 +319,7 @@ session.close()
 ```
 
 ###### Notes:
-`ForeignKey` and `relationship` are both in the parent model, the child model has no knowledge of the relationship. You can relate **one** child to many **parents** because the parent is the holder of the ForeginKey. Basic rule, whichever model holds the ForeginKey is the "Many" part of the relationship.
+One to One relationships are interesting because the incorporate `back_populate` or `backref` to create a bidirectional relationship between the two objects. The setup is simple if you have gone over OtM and MtO 😄.
 
 ---
 

@@ -12,9 +12,9 @@ class Humanoid(Base):
     date_initiated = Column(DateTime, default=func.now())
     complaint = Column(String, nullable=False)
     # create a relationship with the child model BarCode
-    # using uslist=Flase to insure that the relationship is scalar
+    # using uselist=Flase to insure that the relationship is scalar
     # using back_populates to allow a bidirectional relatioship
-    # using lazy=True, to load(query) the BarCode child with the Humanoid
+    # using lazy=False, to load(query) the BarCode child with the Humanoid obj
     barcode = relationship('BarCode', uselist=False, back_populates="humanoid", lazy=False)
 
 class BarCode(Base):
@@ -26,7 +26,7 @@ class BarCode(Base):
     # set nullable=False which means that a parent id is
     # required to create a BarCode obj
     humanoid_id = Column(ForeignKey('humanoids.id'), nullable=False)
-    # create a relatioship with the Parent model in order to access
+    # create a relationship with the Parent model in order to access
     # the parent object from the child
     # Note that the back_populate args  match the opposite column names
     # This is how the relationship is formed
@@ -49,7 +49,7 @@ session.add(bot1)
 
 # session.commit() will update the previous objects
 # in this case bot1 which will fill in all of the
-# fields that the database is responsibe for.
+# fields that the database is responsible for.
 session.commit()
 
 # create a barcode object an add the humanoid.id to the params
@@ -67,12 +67,12 @@ def bot_info(bot_obj):
     if not isinstance(bot_obj, Humanoid):
         print "The provided object is not a bot :("
     else:
-        print "Now analising bot id: %s" % bot_obj.id
+        print "Now analysing bot id: %s" % bot_obj.id
         print "Bot Name: %s" % bot_obj.name
         print "Bot barcode: %s" % bot_obj.barcode.actual
         print "Initial Date bot came online: %s" % bot_obj.date_initiated
         print "Is bot Encrypted: %s" % bool(len(bot_obj.barcode.encryption_type))
-        print "Analasis is finished."
+        print "Analysis is finished."
     print "===============++++===============\n"
 
 # lets access some data from the bot:

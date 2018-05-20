@@ -3,7 +3,7 @@
 > ⚠️**Warning: You *WILL* need a sense of humour to read this guide!** <br>
 > A super simple guide on *One to Many, Many to One, One to One and Many to Many* Relationships <br>
 > Most of the links in this guide link back to the [Official SQLAlchemy documentation](http://docs.sqlalchemy.org/en/latest/orm/tutorial.html) <br>
-> Please send ~~nudes~~ commits if you find any errors or if you can make an example clearer. <br>
+> Please send pull requests if you find any errors or if you can make an example clearer. <br>
 
 ---
 

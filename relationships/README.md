@@ -1,4 +1,4 @@
-#### *A jackasses guide to SQLAlchemy <br> By LibreLad: Part-time Jackass* <br> **Relationship Basics**
+#### *A hitchhiker's guide to SQLAlchemy <br> By LibreLad: Part-time hitchhiker* <br> **Relationship Basics**
 
 > ⚠️**Warning: You *WILL* need a sense of humour to read this guide!** <br>
 > A super simple guide on *One to Many, Many to One, One to One and Many to Many* Relationships <br>

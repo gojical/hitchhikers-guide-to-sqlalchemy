@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine, Table, Column, Integer, ForeignKey, Sequence, String, func, DateTime
+from sqlalchemy import create_engine, Table, Column, Integer, ForeignKey, Sequence, String, func, DateTime, bindparam, Interval
 from sqlalchemy.orm import relationship, sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 
@@ -26,6 +26,7 @@ class Human(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String)
     carsAssoc = relationship('HumanCarAssociation')
+    e =  func.date_add(func.now(), bindparam('e', func.text('INTERVAL 5 day')))
 
 class Car(Base):
     '''
@@ -77,8 +78,11 @@ for cars in person.carsAssoc:
     print cars.cars.model
 
 # get all people that drive the VW
-drivers = session.query(Car).outerjoin(Car.id).filter(HumanCarAssociation.car_id == 1)
-print drivers
+# drivers = session.query(Car).outerjoin(Car.id).filter(HumanCarAssociation.car_id == 1)
+# print drivers
+
+
+print person2.e
 
 # commit objects to the database and close the session
 session.commit()
